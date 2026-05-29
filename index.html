@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Continue Playing</title>
+
+<style>
+
+body{
+  margin:0;
+  background:#000000;
+  color:white;
+  font-family:Arial, sans-serif;
+  padding:20px;
+  overflow-x:hidden;
+}
+
+/* HEADER */
+
+.topBar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:24px;
+}
+
+.title{
+  font-size:26px;
+  font-weight:700;
+  color:white;
+}
+
+/* TOGGLE */
+
+select{
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+
+  background:white;
+  color:black;
+
+  border:none;
+  border-radius:999px;
+
+  height:36px;
+  padding:0 16px;
+
+  font-size:14px;
+  font-weight:600;
+
+  text-align:center;
+  text-align-last:center;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  outline:none;
+  cursor:pointer;
+}
+
+/* GAME ROW */
+
+.gamesRow{
+  display:flex;
+  gap:16px;
+  overflow-x:auto;
+  padding-bottom:10px;
+  scroll-behavior:smooth;
+}
+
+.gamesRow::-webkit-scrollbar{
+  display:none;
+}
+
+/* CARD */
+
+.gameCard{
+  width:160px;
+  flex-shrink:0;
+}
+
+.thumb{
+  width:160px;
+  height:160px;
+  border-radius:16px;
+  object-fit:cover;
+  background:#111;
+}
+
+.gameName{
+  margin-top:8px;
+
+  font-size:17px;
+  font-weight:600;
+  line-height:1.2;
+
+  color:white;
+
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+
+  overflow:hidden;
+
+  min-height:42px;
+}
+
+/* HOURS ALIGN */
+
+.hoursPlayed{
+  margin-top:8px;
+
+  color:white;
+  font-size:14px;
+}
+
+/* MOBILE */
+
+@media (max-width:600px){
+
+  .gameCard{
+    width:130px;
+  }
+
+  .thumb{
+    width:130px;
+    height:130px;
+  }
+
+  .gameName{
+    font-size:15px;
+    min-height:38px;
+  }
+
+  .hoursPlayed{
+    font-size:13px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="topBar">
+
+  <div class="title">
+    Recently Played
+  </div>
+
+  <select id="filter" onchange="renderGames()">
+    <option value="day">Day</option>
+    <option value="week">Week</option>
+    <option value="month">Month</option>
+    <option value="all">All</option>
+  </select>
+
+</div>
+
+<div class="gamesRow" id="gamesRow"></div>
+
+<script>
+
+const API =
+"https://script.google.com/macros/s/AKfycby5tKKny4hqGyG--JQxP4IVe2C8WWGO6sMij6p66MdSmLFVDUn6TbeBbM2L51TdWia_/exec";
+
+let games = [];
+
+async function loadGames(){
+
+  const res = await fetch(API);
+
+  games = await res.json();
+
+  renderGames();
+}
+
+function renderGames(){
+
+  const row =
+    document.getElementById("gamesRow");
+
+  row.innerHTML = "";
+
+  const filter =
+    document.getElementById("filter").value;
+
+  const now = new Date();
+
+  let filtered = games.filter(g => {
+
+    const d = new Date(g.date);
+
+    const diff =
+      (now - d) / (1000 * 60 * 60 * 24);
+
+    // DAY
+    if(filter === "day"){
+
+      return (
+        d.getDate() === now.getDate() &&
+        d.getMonth() === now.getMonth() &&
+        d.getFullYear() === now.getFullYear()
+      );
+    }
+
+    // WEEK
+    if(filter === "week"){
+      return diff <= 7;
+    }
+
+    // MONTH
+    if(filter === "month"){
+      return diff <= 30;
+    }
+
+    // ALL
+    return true;
+  });
+
+  // MERGE DUPLICATE GAMES
+
+  const merged = {};
+
+  filtered.forEach(g => {
+
+    if(!merged[g.id]){
+
+      merged[g.id] = {
+        ...g,
+        minutes:0
+      };
+    }
+
+    merged[g.id].minutes += g.minutes;
+  });
+
+  filtered =
+    Object.values(merged);
+
+  filtered.sort(
+    (a,b)=>b.minutes-a.minutes
+  );
+
+  // DISPLAY
+
+  filtered.forEach(g => {
+
+    const hours =
+      Math.floor(g.minutes / 60);
+
+    const mins =
+      g.minutes % 60;
+
+    row.innerHTML += `
+
+      <div class="gameCard">
+
+        <img
+          class="thumb"
+          src="${g.image}"
+        >
+
+        <div class="gameName">
+          ${g.name}
+        </div>
+
+        <div class="hoursPlayed">
+          ${hours}h ${mins}m
+        </div>
+
+      </div>
+
+    `;
+  });
+}
+
+loadGames();
+
+setInterval(loadGames, 60000);
+
+</script>
+
+</body>
+</html>
