@@ -97,7 +97,9 @@ select{
 
   -webkit-overflow-scrolling:touch;
 
-  touch-action:pan-x;
+  scrollbar-width:none;
+
+  cursor:grab;
 }
 
 .gamesRow::-webkit-scrollbar{
@@ -112,7 +114,7 @@ select{
 
   user-select:none;
 
-  touch-action:pan-x;
+  -webkit-user-select:none;
 }
 
 .thumb{
@@ -125,9 +127,10 @@ select{
 
   background:#111;
 
+  user-select:none;
   -webkit-user-drag:none;
 
-  touch-action:pan-x;
+  pointer-events:none;
 }
 
 .gameName{
@@ -148,7 +151,7 @@ select{
 
   min-height:34px;
 
-  touch-action:pan-x;
+  pointer-events:none;
 }
 
 .hoursPlayed{
@@ -158,7 +161,7 @@ select{
 
   font-size:12px;
 
-  touch-action:pan-x;
+  pointer-events:none;
 }
 
 /* MOBILE */
