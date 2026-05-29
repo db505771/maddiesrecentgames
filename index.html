@@ -2,19 +2,40 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta
+  name="viewport"
+  content="
+    width=device-width,
+    initial-scale=1.0,
+    maximum-scale=1.0,
+    user-scalable=no
+  "
+/>
 
 <title>Continue Playing</title>
 
 <style>
 
+html,
 body{
   margin:0;
+  width:100%;
+  height:100%;
+
+  overflow:hidden;
+
   background:#000000;
   color:white;
+
   font-family:Arial, sans-serif;
-  padding:20px;
-  overflow-x:hidden;
+
+  touch-action:pan-x;
+}
+
+/* PAGE */
+
+.page{
+  padding:18px;
 }
 
 /* HEADER */
@@ -22,12 +43,13 @@ body{
 .topBar{
   display:flex;
   align-items:center;
-  gap:12px;
-  margin-bottom:24px;
+  gap:10px;
+
+  margin-bottom:18px;
 }
 
 .title{
-  font-size:26px;
+  font-size:24px;
   font-weight:700;
   color:white;
 }
@@ -45,31 +67,39 @@ select{
   border:none;
   border-radius:999px;
 
-  height:36px;
-  padding:0 16px;
+  height:32px;
 
-  font-size:14px;
+  padding:0 14px;
+
+  font-size:13px;
   font-weight:600;
 
   text-align:center;
   text-align-last:center;
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
   outline:none;
+
   cursor:pointer;
+
+  flex-shrink:0;
 }
 
 /* GAME ROW */
 
 .gamesRow{
   display:flex;
-  gap:16px;
+  gap:12px;
+
   overflow-x:auto;
-  padding-bottom:10px;
+  overflow-y:hidden;
+
+  padding-bottom:4px;
+
   scroll-behavior:smooth;
+
+  -webkit-overflow-scrolling:touch;
+
+  touch-action:pan-x;
 }
 
 .gamesRow::-webkit-scrollbar{
@@ -79,23 +109,27 @@ select{
 /* CARD */
 
 .gameCard{
-  width:160px;
+  width:120px;
   flex-shrink:0;
 }
 
 .thumb{
-  width:160px;
-  height:160px;
-  border-radius:16px;
+  width:120px;
+  height:120px;
+
+  border-radius:14px;
+
   object-fit:cover;
+
   background:#111;
 }
 
 .gameName{
-  margin-top:8px;
+  margin-top:7px;
 
-  font-size:17px;
+  font-size:14px;
   font-weight:600;
+
   line-height:1.2;
 
   color:white;
@@ -106,16 +140,15 @@ select{
 
   overflow:hidden;
 
-  min-height:42px;
+  min-height:34px;
 }
 
-/* HOURS ALIGN */
-
 .hoursPlayed{
-  margin-top:8px;
+  margin-top:5px;
 
   color:white;
-  font-size:14px;
+
+  font-size:12px;
 }
 
 /* MOBILE */
@@ -123,21 +156,21 @@ select{
 @media (max-width:600px){
 
   .gameCard{
-    width:130px;
+    width:110px;
   }
 
   .thumb{
-    width:130px;
-    height:130px;
+    width:110px;
+    height:110px;
   }
 
   .gameName{
-    font-size:15px;
-    min-height:38px;
+    font-size:13px;
+    min-height:32px;
   }
 
   .hoursPlayed{
-    font-size:13px;
+    font-size:11px;
   }
 }
 
@@ -146,22 +179,29 @@ select{
 
 <body>
 
-<div class="topBar">
+<div class="page">
 
-  <div class="title">
-    Recently Played
+  <div class="topBar">
+
+    <div class="title">
+      Top Played Games
+    </div>
+
+    <select id="filter" onchange="changeFilter()">
+      <option value="day">Day</option>
+      <option value="week">Week</option>
+      <option value="month">Month</option>
+      <option value="all">All</option>
+    </select>
+
   </div>
 
-  <select id="filter" onchange="renderGames()">
-    <option value="day">Day</option>
-    <option value="week">Week</option>
-    <option value="month">Month</option>
-    <option value="all">All</option>
-  </select>
+  <div
+    class="gamesRow"
+    id="gamesRow"
+  ></div>
 
 </div>
-
-<div class="gamesRow" id="gamesRow"></div>
 
 <script>
 
@@ -175,6 +215,17 @@ async function loadGames(){
   const res = await fetch(API);
 
   games = await res.json();
+
+  renderGames();
+}
+
+function changeFilter(){
+
+  const row =
+    document.getElementById("gamesRow");
+
+  // FIX SCROLL BUG
+  row.scrollLeft = 0;
 
   renderGames();
 }
@@ -222,7 +273,7 @@ function renderGames(){
     return true;
   });
 
-  // MERGE DUPLICATE GAMES
+  // MERGE DUPLICATES
 
   const merged = {};
 
@@ -262,6 +313,7 @@ function renderGames(){
 
         <img
           class="thumb"
+          draggable="false"
           src="${g.image}"
         >
 
