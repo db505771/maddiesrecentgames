@@ -215,51 +215,49 @@ select{
 
 <script>
 
-const API =
-"https://script.google.com/macros/s/AKfycby5tKKny4hqGyG--JQxP4IVe2C8WWGO6sMij6p66MdSmLFVDUn6TbeBbM2L51TdWia_/exec";
+const API = "https://script.google.com/macros/s/AKfycby5tKKny4hqGyG--JQxP4IVe2C8WWGO6sMij6p66MdSmLFVDUn6TbeBbM2L51TdWia_/exec";
 
 let games = [];
 
+// ⚡ Load instantly from local storage cache if it exists
+const cachedData = localStorage.getItem("roblox_games_cache");
+if (cachedData) {
+  try {
+    games = JSON.parse(cachedData);
+    renderGames();
+  } catch(e) {}
+}
+
 async function loadGames(){
-
-  const res = await fetch(API);
-
-  games = await res.json();
-
-  renderGames();
+  try {
+    const res = await fetch(API);
+    games = await res.json();
+    
+    // Update cache with fresh data
+    localStorage.setItem("roblox_games_cache", JSON.stringify(games));
+    
+    renderGames();
+  } catch (err) {
+    console.error("Failed to fetch game data:", err);
+  }
 }
 
 function changeFilter(){
-
-  const row =
-    document.getElementById("gamesRow");
-
+  const row = document.getElementById("gamesRow");
   row.scrollLeft = 0;
-
   renderGames();
 }
 
 function renderGames(){
-
-  const row =
-    document.getElementById("gamesRow");
-
-  row.innerHTML = "";
-
-  const filter =
-    document.getElementById("filter").value;
-
+  const row = document.getElementById("gamesRow");
+  const filter = document.getElementById("filter").value;
   const now = new Date();
 
   let filtered = games.filter(g => {
-
     const d = new Date(g.date);
-
-    const diff =
-      (now - d) / (1000 * 60 * 60 * 24);
+    const diff = (now - d) / (1000 * 60 * 60 * 24);
 
     if(filter === "day"){
-
       return (
         d.getDate() === now.getDate() &&
         d.getMonth() === now.getMonth() &&
@@ -279,65 +277,50 @@ function renderGames(){
   });
 
   // MERGE DUPLICATES
-
   const merged = {};
-
   filtered.forEach(g => {
-
     if(!merged[g.id]){
-
       merged[g.id] = {
         ...g,
         minutes:0
       };
     }
-
     merged[g.id].minutes += g.minutes;
   });
 
-  filtered =
-    Object.values(merged);
+  filtered = Object.values(merged);
+  filtered.sort((a,b) => b.minutes - a.minutes);
 
-  filtered.sort(
-    (a,b)=>b.minutes-a.minutes
-  );
-
-  // DISPLAY
+  // ⚡ BATCH DOM DISPLAY (Fixes the rendering lag)
+  let htmlString = "";
 
   filtered.forEach(g => {
+    const hours = Math.floor(g.minutes / 60);
+    const mins = g.minutes % 60;
 
-    const hours =
-      Math.floor(g.minutes / 60);
-
-    const mins =
-      g.minutes % 60;
-
-    row.innerHTML += `
-
+    htmlString += `
       <div class="gameCard">
-
         <img
           class="thumb"
           draggable="false"
-          src="${g.image}"
+          src="${g.image || ''}"
+          alt=""
         >
-
         <div class="gameName">
           ${g.name}
         </div>
-
         <div class="hoursPlayed">
           ${hours}h ${mins}m
         </div>
-
       </div>
-
     `;
   });
+
+  // Write everything to the screen exactly once
+  row.innerHTML = htmlString || '<div style="color: #666; font-size: 14px; padding: 10px;">No history found.</div>';
 }
 
 loadGames();
-
 setInterval(loadGames, 60000);
 
 </script>
