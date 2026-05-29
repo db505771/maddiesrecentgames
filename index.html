@@ -111,6 +111,11 @@ select{
 .gameCard{
   width:120px;
   flex-shrink:0;
+
+  user-select:none;
+
+  /* 🔥 makes whole card draggable */
+  touch-action:pan-x;
 }
 
 .thumb{
@@ -122,6 +127,10 @@ select{
   object-fit:cover;
 
   background:#111;
+
+  pointer-events:none;
+
+  -webkit-user-drag:none;
 }
 
 .gameName{
@@ -141,6 +150,8 @@ select{
   overflow:hidden;
 
   min-height:34px;
+
+  pointer-events:none;
 }
 
 .hoursPlayed{
@@ -149,6 +160,8 @@ select{
   color:white;
 
   font-size:12px;
+
+  pointer-events:none;
 }
 
 /* MOBILE */
@@ -224,7 +237,6 @@ function changeFilter(){
   const row =
     document.getElementById("gamesRow");
 
-  // FIX SCROLL BUG
   row.scrollLeft = 0;
 
   renderGames();
