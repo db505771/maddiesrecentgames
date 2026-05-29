@@ -99,7 +99,8 @@ select{
 
   scrollbar-width:none;
 
-  cursor:grab;
+  /* 🔥 FIX */
+  touch-action:auto;
 }
 
 .gamesRow::-webkit-scrollbar{
@@ -113,8 +114,10 @@ select{
   flex-shrink:0;
 
   user-select:none;
-
   -webkit-user-select:none;
+
+  /* 🔥 FIX */
+  pointer-events:none;
 }
 
 .thumb{
@@ -129,8 +132,6 @@ select{
 
   user-select:none;
   -webkit-user-drag:none;
-
-  pointer-events:none;
 }
 
 .gameName{
@@ -150,8 +151,6 @@ select{
   overflow:hidden;
 
   min-height:34px;
-
-  pointer-events:none;
 }
 
 .hoursPlayed{
@@ -160,8 +159,6 @@ select{
   color:white;
 
   font-size:12px;
-
-  pointer-events:none;
 }
 
 /* MOBILE */
@@ -261,7 +258,6 @@ function renderGames(){
     const diff =
       (now - d) / (1000 * 60 * 60 * 24);
 
-    // DAY
     if(filter === "day"){
 
       return (
@@ -271,17 +267,14 @@ function renderGames(){
       );
     }
 
-    // WEEK
     if(filter === "week"){
       return diff <= 7;
     }
 
-    // MONTH
     if(filter === "month"){
       return diff <= 30;
     }
 
-    // ALL
     return true;
   });
 
