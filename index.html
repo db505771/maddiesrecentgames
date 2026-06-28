@@ -118,6 +118,9 @@ select{
 
   /* 🔥 FIX */
   pointer-events:none;
+  
+  /* Added to position the streak badge over the thumbnail */
+  position: relative;
 }
 
 .thumb{
@@ -132,6 +135,58 @@ select{
 
   user-select:none;
   -webkit-user-drag:none;
+}
+
+/* LIQUID GLASS STREAK BADGE */
+.streakBadge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  
+  /* Liquid Glass Base */
+  background: linear-gradient(135deg, rgba(255, 90, 0, 0.45), rgba(255, 0, 128, 0.35));
+  backdrop-filter: blur(8px) saturate(160%);
+  -webkit-backdrop-filter: blur(8px) saturate(160%);
+  
+  /* Glass Border & Glossy Highlights */
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-top: 1px solid rgba(255, 255, 255, 0.55);
+  border-left: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 20px;
+  
+  padding: 3px 8px;
+  
+  font-size: 11px;
+  font-weight: 800;
+  color: #ffffff;
+  
+  /* Glow Drop Shadow */
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    0 4px 10px rgba(255, 40, 100, 0.4),
+    0 1px 3px rgba(0, 0, 0, 0.4);
+    
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+
+.streakIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+}
+
+.streakIcon svg {
+  width: 100%;
+  height: 100%;
+  fill: #fff;
+  filter: drop-shadow(0 1px 2px rgba(255, 90, 0, 0.6));
 }
 
 .gameName{
@@ -181,6 +236,18 @@ select{
 
   .hoursPlayed{
     font-size:11px;
+  }
+  
+  .streakBadge {
+    top: 5px;
+    right: 5px;
+    padding: 2px 6px;
+    font-size: 10px;
+  }
+  
+  .streakIcon {
+    width: 10px;
+    height: 10px;
   }
 }
 
@@ -252,6 +319,9 @@ function renderGames(){
   const row = document.getElementById("gamesRow");
   const filter = document.getElementById("filter").value;
   const now = new Date();
+  
+  // Set up today string comparison helper
+  const todayStr = now.toDateString();
 
   let filtered = games.filter(g => {
     const d = new Date(g.date);
@@ -276,7 +346,53 @@ function renderGames(){
     return true;
   });
 
-  // MERGE DUPLICATES
+  // Calculate consecutive active daily streaks per unique game ID from raw historical logs
+  const streakMapping = {};
+  
+  // Group dates by game ID and sort them chronologically
+  const gameDates = {};
+  games.forEach(g => {
+    if(!gameDates[g.id]) gameDates[g.id] = new Set();
+    // Use local date string to ignore hours/minutes/seconds mismatches
+    gameDates[g.id].add(new Date(g.date).toDateString());
+  });
+
+  Object.keys(gameDates).forEach(id => {
+    // Convert Set back to an array of sorted unique timestamps
+    const sortedDates = Array.from(gameDates[id]).map(d => new Date(d)).sort((a, b) => b - a);
+    
+    let streak = 0;
+    let expectedDate = new Date(todayStr); // Start checking backward from today
+    
+    // Check if the game was played today or yesterday to see if a streak is active
+    const hasPlayedToday = sortedDates.some(d => d.toDateString() === todayStr);
+    
+    let yesterday = new Date(todayStr);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const hasPlayedYesterday = sortedDates.some(d => d.toDateString() === yesterday.toDateString());
+    
+    if (hasPlayedToday || hasPlayedYesterday) {
+      // If they didn't play today but did yesterday, start calculations from yesterday
+      if (!hasPlayedToday && hasPlayedYesterday) {
+        expectedDate = yesterday;
+      }
+      
+      // Count backwards for consecutive days matching
+      for (let i = 0; i < sortedDates.length; i++) {
+        if (sortedDates[i].toDateString() === expectedDate.toDateString()) {
+          streak++;
+          // Shift expected target date back by 1 calendar day
+          expectedDate.setDate(expectedDate.getDate() - 1);
+        } else if (sortedDates[i] < expectedDate) {
+          // Found a missing day, streak breaks here
+          break;
+        }
+      }
+    }
+    streakMapping[id] = streak;
+  });
+
+  // MERGE DUPLICATES FOR CURRENT FILTER VIEW
   const merged = {};
   filtered.forEach(g => {
     if(!merged[g.id]){
@@ -291,15 +407,34 @@ function renderGames(){
   filtered = Object.values(merged);
   filtered.sort((a,b) => b.minutes - a.minutes);
 
-  // ⚡ BATCH DOM DISPLAY (Fixes the rendering lag)
+  // ⚡ BATCH DOM DISPLAY
   let htmlString = "";
 
   filtered.forEach(g => {
     const hours = Math.floor(g.minutes / 60);
     const mins = g.minutes % 60;
+    
+    // Fetch computed consecutive days count
+    const consecutiveStreak = streakMapping[g.id] || 0;
+    
+    // Only generate HTML badge if streak metric is 2 or up
+    let badgeHtml = "";
+    if (consecutiveStreak >= 2) {
+      badgeHtml = `
+        <div class="streakBadge">
+          <span class="streakIcon">
+            <svg viewBox="0 0 24 24">
+              <path d="M17.66 11.57c-.77-.77-1.9-1.15-2.85-1.43-.87-.25-1.56-.45-1.95-.73-.55-.4-.76-.94-.76-1.57 0-.46.12-.89.37-1.3l.05-.07c.1-.15.14-.32.14-.49 0-.41-.25-.79-.65-.95-.38-.16-.83-.07-1.13.2l-.1.09C9.52 6.55 8.75 8.39 8.75 10c0 .33.02.66.07.98l.04.22c-.67-.47-1.21-1.12-1.55-1.87-.14-.3-.41-.5-.73-.52-.31-.02-.62.11-.8.37C5.3 10.02 5 11.19 5 12.5c0 3.87 3.13 7 7 7s7-3.13 7-7c0-1.28-.35-2.42-.96-3.41-.18-.3-.51-.47-.86-.44-.35.03-.66.24-.78.56-.37.98-.99 1.74-1.74 2.36z"/>
+            </svg>
+          </span>
+          <span>${consecutiveStreak}</span>
+        </div>
+      `;
+    }
 
     htmlString += `
       <div class="gameCard">
+        ${badgeHtml}
         <img
           class="thumb"
           draggable="false"
