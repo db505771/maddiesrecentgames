@@ -4,323 +4,265 @@
 <meta charset="UTF-8" />
 <meta
   name="viewport"
-  content="
-    width=device-width,
-    initial-scale=1.0,
-    maximum-scale=1.0,
-    user-scalable=no
-  "
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
 />
-
 <title>Continue Playing</title>
-
 <style>
-
 html,
 body{
   margin:0;
   width:100%;
   height:100%;
-
   overflow:hidden;
-
-  background: transparent; /* Made background transparent */
+  background:transparent;
   color:white;
-
   font-family:Arial, sans-serif;
 }
-
 /* PAGE */
-
 .page{
   padding:18px;
 }
-
 /* HEADER */
-
 .topBar{
   display:flex;
   align-items:center;
   gap:10px;
-
   margin-bottom:18px;
 }
-
 .title{
   font-size:24px;
   font-weight:700;
   color:white;
 }
-
 /* TOGGLE */
-
 select{
   appearance:none;
   -webkit-appearance:none;
   -moz-appearance:none;
-
-  background:rgba(255, 255, 255, 0.9);
-  color:black;
-
+  background:transparent;
+  color:white;
   border:none;
   border-radius:999px;
-
   height:32px;
-
   padding:0 14px;
-
   font-size:13px;
   font-weight:600;
-
   text-align:center;
   text-align-last:center;
-
   outline:none;
-
   cursor:pointer;
-
   flex-shrink:0;
 }
-
+/* DROPDOWN OPTIONS */
+select option{
+  background:#222222;
+  color:white;
+}
 /* GAME ROW */
-
 .gamesRow{
   display:flex;
   gap:12px;
-
   overflow-x:auto;
   overflow-y:hidden;
-
   padding-bottom:4px;
-
   scroll-behavior:smooth;
-
   -webkit-overflow-scrolling:touch;
-
   scrollbar-width:none;
-
   touch-action:auto;
 }
-
 .gamesRow::-webkit-scrollbar{
   display:none;
 }
-
 /* CARD */
-
 .gameCard{
   width:120px;
   flex-shrink:0;
-
   user-select:none;
   -webkit-user-select:none;
-
   pointer-events:none;
-  
-  position: relative;
+  position:relative;
 }
-
 .thumb{
   width:120px;
   height:120px;
-
   border-radius:14px;
-
   object-fit:cover;
-
-  background:rgba(17, 17, 17, 0.5);
-
+  background:rgba(17,17,17,0.5);
   user-select:none;
   -webkit-user-drag:none;
 }
-
 /* LIQUID GLASS STREAK BADGE */
-.streakBadge {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  
-  background: linear-gradient(135deg, rgba(255, 90, 0, 0.45), rgba(255, 0, 128, 0.35));
-  backdrop-filter: blur(8px) saturate(160%);
-  -webkit-backdrop-filter: blur(8px) saturate(160%);
-  
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-top: 1px solid rgba(255, 255, 255, 0.55);
-  border-left: 1px solid rgba(255, 255, 255, 0.45);
-  border-radius: 20px;
-  
-  padding: 3px 8px;
-  
-  font-size: 11px;
-  font-weight: 800;
-  color: #ffffff;
-  
-  box-shadow: 
-    inset 0 1px 1px rgba(255, 255, 255, 0.3),
-    0 4px 10px rgba(255, 40, 100, 0.4),
-    0 1px 3px rgba(0, 0, 0, 0.4);
-    
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-  z-index: 2;
+.streakBadge{
+  position:absolute;
+  top:6px;
+  right:6px;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  background:linear-gradient(
+    135deg,
+    rgba(255,90,0,0.45),
+    rgba(255,0,128,0.35)
+  );
+  backdrop-filter:blur(8px) saturate(160%);
+  -webkit-backdrop-filter:blur(8px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.25);
+  border-top:1px solid rgba(255,255,255,0.55);
+  border-left:1px solid rgba(255,255,255,0.45);
+  border-radius:20px;
+  padding:3px 8px;
+  font-size:11px;
+  font-weight:800;
+  color:#ffffff;
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.3),
+    0 4px 10px rgba(255,40,100,0.4),
+    0 1px 3px rgba(0,0,0,0.4);
+  text-shadow:0 1px 2px rgba(0,0,0,0.5);
+  z-index:2;
 }
-
-.streakIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 12px;
-  height: 12px;
+.streakIcon{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:12px;
+  height:12px;
 }
-
-.streakIcon svg {
-  width: 100%;
-  height: 100%;
-  fill: #fff;
-  filter: drop-shadow(0 1px 2px rgba(255, 90, 0, 0.6));
+.streakIcon svg{
+  width:100%;
+  height:100%;
+  fill:#fff;
+  filter:drop-shadow(0 1px 2px rgba(255,90,0,0.6));
 }
-
 .gameName{
   margin-top:7px;
-
   font-size:14px;
   font-weight:600;
-
   line-height:1.2;
-
   color:white;
-
   display:-webkit-box;
   -webkit-line-clamp:2;
   -webkit-box-orient:vertical;
-
   overflow:hidden;
-
   min-height:34px;
 }
-
 .hoursPlayed{
   margin-top:5px;
-
   color:white;
-
   font-size:12px;
 }
-
 /* MOBILE */
-
-@media (max-width:600px){
-
+@media(max-width:600px){
   .gameCard{
     width:110px;
   }
-
   .thumb{
     width:110px;
     height:110px;
   }
-
   .gameName{
     font-size:13px;
     min-height:32px;
   }
-
   .hoursPlayed{
     font-size:11px;
   }
-  
-  .streakBadge {
-    top: 5px;
-    right: 5px;
-    padding: 2px 6px;
-    font-size: 10px;
+  .streakBadge{
+    top:5px;
+    right:5px;
+    padding:2px 6px;
+    font-size:10px;
   }
-  
-  .streakIcon {
-    width: 10px;
-    height: 10px;
+  .streakIcon{
+    width:10px;
+    height:10px;
   }
 }
-
 </style>
 </head>
-
 <body>
-
 <div class="page">
-
   <div class="topBar">
-
-    <div class="title">
-      Top Games Played
-    </div>
-
-    <select id="filter" onchange="changeFilter()">
-      <option value="day">Day</option>
-      <option value="week">Week</option>
-      <option value="month">Month</option>
-      <option value="all">All</option>
-    </select>
-
-  </div>
-
-  <div
-    class="gamesRow"
-    id="gamesRow"
-  ></div>
-
+<div class="title">
+  Top Games Played
 </div>
-
+<select id="filter" onchange="changeFilter()">
+  <option value="day">Day</option>
+  <option value="week">Week</option>
+  <option value="month">Month</option>
+  <option value="all">All</option>
+</select>
+  </div>
+  <div class="gamesRow" id="gamesRow"></div>
+</div>
 <script>
-
 const API = "https://script.google.com/macros/s/AKfycby5tKKny4hqGyG--JQxP4IVe2C8WWGO6sMij6p66MdSmLFVDUn6TbeBbM2L51TdWia_/exec";
-
 let games = [];
-
-// ⚡ Load instantly from local storage cache if it exists
-const cachedData = localStorage.getItem("roblox_games_cache");
-if (cachedData) {
-  try {
-    games = JSON.parse(cachedData);
-    renderGames();
-  } catch(e) {}
+let userChangedFilter = false;
+// CHECK WHETHER THERE ARE GAMES TODAY
+function hasPlayedToday(){
+  const now = new Date();
+  return games.some(g => {
+    const d = new Date(g.date);
+    return (
+      !isNaN(d.getTime()) &&
+      d.getDate() === now.getDate() &&
+      d.getMonth() === now.getMonth() &&
+      d.getFullYear() === now.getFullYear()
+    );
+  });
 }
-
-async function loadGames(){
-  try {
-    const res = await fetch(API);
-    games = await res.json();
-    
-    // Update cache with fresh data
-    localStorage.setItem("roblox_games_cache", JSON.stringify(games));
-    
-    renderGames();
-  } catch (err) {
-    console.error("Failed to fetch game data:", err);
+// AUTOMATIC DEFAULT VIEW
+function setDefaultFilter(){
+  if(userChangedFilter) return;
+  const filter = document.getElementById("filter");
+  if(hasPlayedToday()){
+    filter.value = "day";
+  }else{
+    filter.value = "week";
   }
 }
-
+// LOAD CACHE
+const cachedData = localStorage.getItem("roblox_games_cache");
+if(cachedData){
+  try{
+    games = JSON.parse(cachedData);
+    setDefaultFilter();
+    renderGames();
+  }catch(e){}
+}
+// LOAD FRESH DATA
+async function loadGames(){
+  try{
+    const res = await fetch(API);
+    games = await res.json();
+    localStorage.setItem(
+      "roblox_games_cache",
+      JSON.stringify(games)
+    );
+    setDefaultFilter();
+    renderGames();
+  }catch(err){
+    console.error("Failed to fetch game data:",err);
+  }
+}
+// CHANGE FILTER
 function changeFilter(){
+  userChangedFilter = true;
   const row = document.getElementById("gamesRow");
   row.scrollLeft = 0;
   renderGames();
 }
-
+// RENDER GAMES
 function renderGames(){
   const row = document.getElementById("gamesRow");
   const filter = document.getElementById("filter").value;
   const now = new Date();
-  
-  // Set up today string comparison helper
   const todayStr = now.toDateString();
-
   let filtered = games.filter(g => {
     const d = new Date(g.date);
+    if(isNaN(d.getTime())) return false;
     const diff = (now - d) / (1000 * 60 * 60 * 24);
-
     if(filter === "day"){
       return (
         d.getDate() === now.getDate() &&
@@ -328,58 +270,60 @@ function renderGames(){
         d.getFullYear() === now.getFullYear()
       );
     }
-
     if(filter === "week"){
-      return diff <= 7;
+      return diff >= 0 && diff <= 7;
     }
-
     if(filter === "month"){
-      return diff <= 30;
+      return diff >= 0 && diff <= 30;
     }
-
     return true;
   });
-
-  // Calculate consecutive active daily streaks per unique game ID from raw historical logs
+  // STREAK CALCULATION
   const streakMapping = {};
-  
-  // Group dates by game ID and sort them chronologically
   const gameDates = {};
   games.forEach(g => {
-    if(!gameDates[g.id]) gameDates[g.id] = new Set();
-    gameDates[g.id].add(new Date(g.date).toDateString());
+    if(!gameDates[g.id]){
+      gameDates[g.id] = new Set();
+    }
+    gameDates[g.id].add(
+      new Date(g.date).toDateString()
+    );
   });
-
   Object.keys(gameDates).forEach(id => {
-    const sortedDates = Array.from(gameDates[id]).map(d => new Date(d)).sort((a, b) => b - a);
-    
+    const sortedDates = Array.from(gameDates[id])
+      .map(d => new Date(d))
+      .sort((a,b) => b-a);
     let streak = 0;
     let expectedDate = new Date(todayStr);
-    
-    const hasPlayedToday = sortedDates.some(d => d.toDateString() === todayStr);
-    
+    const hasPlayedToday = sortedDates.some(
+      d => d.toDateString() === todayStr
+    );
     let yesterday = new Date(todayStr);
-    yesterday.setDate(yesterday.getDate() - 1);
-    const hasPlayedYesterday = sortedDates.some(d => d.toDateString() === yesterday.toDateString());
-    
-    if (hasPlayedToday || hasPlayedYesterday) {
-      if (!hasPlayedToday && hasPlayedYesterday) {
+    yesterday.setDate(yesterday.getDate()-1);
+    const hasPlayedYesterday = sortedDates.some(
+      d => d.toDateString() === yesterday.toDateString()
+    );
+    if(hasPlayedToday || hasPlayedYesterday){
+      if(!hasPlayedToday && hasPlayedYesterday){
         expectedDate = yesterday;
       }
-      
-      for (let i = 0; i < sortedDates.length; i++) {
-        if (sortedDates[i].toDateString() === expectedDate.toDateString()) {
+      for(let i=0;i<sortedDates.length;i++){
+        if(
+          sortedDates[i].toDateString() ===
+          expectedDate.toDateString()
+        ){
           streak++;
-          expectedDate.setDate(expectedDate.getDate() - 1);
-        } else if (sortedDates[i] < expectedDate) {
+          expectedDate.setDate(
+            expectedDate.getDate()-1
+          );
+        }else if(sortedDates[i] < expectedDate){
           break;
         }
       }
     }
     streakMapping[id] = streak;
   });
-
-  // MERGE DUPLICATES FOR CURRENT FILTER VIEW
+  // MERGE DUPLICATES
   const merged = {};
   filtered.forEach(g => {
     if(!merged[g.id]){
@@ -388,23 +332,18 @@ function renderGames(){
         minutes:0
       };
     }
-    merged[g.id].minutes += g.minutes;
+    merged[g.id].minutes += Number(g.minutes) || 0;
   });
-
   filtered = Object.values(merged);
-  filtered.sort((a,b) => b.minutes - a.minutes);
-
-  // ⚡ BATCH DOM DISPLAY
+  filtered.sort((a,b) => b.minutes-a.minutes);
+  // DISPLAY GAMES
   let htmlString = "";
-
   filtered.forEach(g => {
-    const hours = Math.floor(g.minutes / 60);
-    const mins = g.minutes % 60;
-    
+    const hours = Math.floor(g.minutes/60);
+    const mins = g.minutes%60;
     const consecutiveStreak = streakMapping[g.id] || 0;
-    
     let badgeHtml = "";
-    if (consecutiveStreak >= 2) {
+    if(consecutiveStreak >= 2){
       badgeHtml = `
         <div class="streakBadge">
           <span class="streakIcon">
@@ -416,7 +355,6 @@ function renderGames(){
         </div>
       `;
     }
-
     htmlString += `
       <div class="gameCard">
         ${badgeHtml}
@@ -435,14 +373,13 @@ function renderGames(){
       </div>
     `;
   });
-
-  row.innerHTML = htmlString || '<div style="color: #666; font-size: 14px; padding: 10px;">No history found.</div>';
+  row.innerHTML = htmlString ||
+    '<div style="color:#666;font-size:14px;padding:10px;">No history found.</div>';
 }
-
+// INITIAL LOAD
 loadGames();
-setInterval(loadGames, 60000);
-
+// REFRESH EVERY MINUTE
+setInterval(loadGames,60000);
 </script>
-
 </body>
 </html>
