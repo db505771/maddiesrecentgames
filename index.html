@@ -8,256 +8,194 @@
 />
 <title>Continue Playing</title>
 <style>
-:root {
-  --color1:#FFFFFF;
-  --color2:#FFFFFF;
-  --color3:#AAAAAA;
-  --color4:#666666;
-  --gradient1:linear-gradient(90deg,#FFFFFF 0%,#FFFFFF 100%);
-  --gradient2:linear-gradient(90deg,#AAAAAA 0%,#666666 100%);
-}
-
 html,
 body{
-margin:0;
-width:100%;
-height:100%;
-overflow:hidden;
-background:transparent;
-color:var(–color1);
-font-family:Arial, sans-serif;
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:transparent;
+  color:white;
+  font-family:Arial, sans-serif;
 }
-
-/* GRADIENT TEXT */
-.primary-gradient{
-display:inline-block;
-background:var(–gradient1);
--webkit-background-clip:text;
-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-
-.secondary-gradient{
-display:inline-block;
-background:var(–gradient2);
--webkit-background-clip:text;
-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-
 /* PAGE */
 .page{
-padding:18px;
+  padding:18px;
 }
-
 /* HEADER */
 .topBar{
-display:flex;
-align-items:center;
-gap:10px;
-margin-bottom:18px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:18px;
 }
 .title{
-font-size:24px;
-font-weight:700;
-color:var(–color1);
+  font-size:24px;
+  font-weight:700;
+  color:white;
 }
-
 /* TOGGLE */
 select{
-appearance:none;
--webkit-appearance:none;
--moz-appearance:none;
-background:transparent;
-color:var(–color1);
-border:none;
-border-radius:999px;
-height:32px;
-padding:0 14px;
-font-size:13px;
-font-weight:600;
-text-align:center;
-text-align-last:center;
-outline:none;
-cursor:pointer;
-flex-shrink:0;
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  background:transparent;
+  color:white;
+  border:none;
+  border-radius:999px;
+  height:32px;
+  padding:0 14px;
+  font-size:13px;
+  font-weight:600;
+  text-align:center;
+  text-align-last:center;
+  outline:none;
+  cursor:pointer;
+  flex-shrink:0;
 }
-
 /* DROPDOWN OPTIONS */
 select option{
-background:#222222;
-color:var(–color1);
+  background:#222222;
+  color:white;
 }
-
 /* GAME ROW */
 .gamesRow{
-display:flex;
-gap:12px;
-overflow-x:auto;
-overflow-y:hidden;
-padding-bottom:4px;
-scroll-behavior:smooth;
--webkit-overflow-scrolling:touch;
-scrollbar-width:none;
-touch-action:auto;
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  padding-bottom:4px;
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  touch-action:auto;
 }
 .gamesRow::-webkit-scrollbar{
-display:none;
+  display:none;
 }
-
 /* CARD */
 .gameCard{
-width:120px;
-flex-shrink:0;
-user-select:none;
--webkit-user-select:none;
-pointer-events:none;
-position:relative;
+  width:120px;
+  flex-shrink:0;
+  user-select:none;
+  -webkit-user-select:none;
+  pointer-events:none;
+  position:relative;
 }
 .thumb{
-width:120px;
-height:120px;
-border-radius:14px;
-object-fit:cover;
-background:rgba(17,17,17,0.5);
-user-select:none;
--webkit-user-drag:none;
+  width:120px;
+  height:120px;
+  border-radius:14px;
+  object-fit:cover;
+  background:rgba(17,17,17,0.5);
+  user-select:none;
+  -webkit-user-drag:none;
 }
-
 /* LIQUID GLASS STREAK BADGE */
 .streakBadge{
-position:absolute;
-top:6px;
-right:6px;
-display:flex;
-align-items:center;
-gap:4px;
-background:linear-gradient(
-135deg,
-rgba(255,90,0,0.45),
-rgba(255,0,128,0.35)
-);
-backdrop-filter:blur(8px) saturate(160%);
--webkit-backdrop-filter:blur(8px) saturate(160%);
-border:1px solid rgba(255,255,255,0.25);
-border-top:1px solid rgba(255,255,255,0.55);
-border-left:1px solid rgba(255,255,255,0.45);
-border-radius:20px;
-padding:3px 8px;
-font-size:11px;
-font-weight:800;
-color:#ffffff;
-box-shadow:
-inset 0 1px 1px rgba(255,255,255,0.3),
-0 4px 10px rgba(255,40,100,0.4),
-0 1px 3px rgba(0,0,0,0.4);
-text-shadow:0 1px 2px rgba(0,0,0,0.5);
-z-index:2;
+  position:absolute;
+  top:6px;
+  right:6px;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  background:linear-gradient(
+    135deg,
+    rgba(255,90,0,0.45),
+    rgba(255,0,128,0.35)
+  );
+  backdrop-filter:blur(8px) saturate(160%);
+  -webkit-backdrop-filter:blur(8px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.25);
+  border-top:1px solid rgba(255,255,255,0.55);
+  border-left:1px solid rgba(255,255,255,0.45);
+  border-radius:20px;
+  padding:3px 8px;
+  font-size:11px;
+  font-weight:800;
+  color:#ffffff;
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.3),
+    0 4px 10px rgba(255,40,100,0.4),
+    0 1px 3px rgba(0,0,0,0.4);
+  text-shadow:0 1px 2px rgba(0,0,0,0.5);
+  z-index:2;
 }
 .streakIcon{
-display:flex;
-align-items:center;
-justify-content:center;
-width:12px;
-height:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:12px;
+  height:12px;
 }
 .streakIcon svg{
-width:100%;
-height:100%;
-fill:#fff;
-filter:drop-shadow(0 1px 2px rgba(255,90,0,0.6));
+  width:100%;
+  height:100%;
+  fill:#fff;
+  filter:drop-shadow(0 1px 2px rgba(255,90,0,0.6));
 }
-
 .gameName{
-margin-top:7px;
-font-size:14px;
-font-weight:600;
-line-height:1.2;
-color:var(–color1);
-display:-webkit-box;
--webkit-line-clamp:2;
--webkit-box-orient:vertical;
-overflow:hidden;
-min-height:34px;
+  margin-top:7px;
+  font-size:14px;
+  font-weight:600;
+  line-height:1.2;
+  color:white;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  min-height:34px;
 }
 .hoursPlayed{
-margin-top:5px;
-color:var(–color3);
-font-size:12px;
+  margin-top:5px;
+  color:white;
+  font-size:12px;
 }
-
 /* MOBILE */
 @media(max-width:600px){
-.gameCard{
-width:110px;
+  .gameCard{
+    width:110px;
+  }
+  .thumb{
+    width:110px;
+    height:110px;
+  }
+  .gameName{
+    font-size:13px;
+    min-height:32px;
+  }
+  .hoursPlayed{
+    font-size:11px;
+  }
+  .streakBadge{
+    top:5px;
+    right:5px;
+    padding:2px 6px;
+    font-size:10px;
+  }
+  .streakIcon{
+    width:10px;
+    height:10px;
+  }
 }
-.thumb{
-width:110px;
-height:110px;
-}
-.gameName{
-font-size:13px;
-min-height:32px;
-}
-.hoursPlayed{
-font-size:11px;
-}
-.streakBadge{
-top:5px;
-right:5px;
-padding:2px 6px;
-font-size:10px;
-}
-.streakIcon{
-width:10px;
-height:10px;
-}
-}
+</style>
 </head>
 <body>
 <div class="page">
   <div class="topBar">
-    <div class="title">
-      <span class="primary-gradient">Top Games Played</span>
-    </div>
-    <select id="filter" onchange="changeFilter()">
-      <option value="day">Day</option>
-      <option value="week">Week</option>
-      <option value="month">Month</option>
-      <option value="all">All</option>
-    </select>
+<div class="title">
+  Top Games Played
+</div>
+<select id="filter" onchange="changeFilter()">
+  <option value="day">Day</option>
+  <option value="week">Week</option>
+  <option value="month">Month</option>
+  <option value="all">All</option>
+</select>
   </div>
   <div class="gamesRow" id="gamesRow"></div>
 </div>
 <script>
-// URL COLOR CUSTOMIZATION
-function getURLColors(){
-  const parts = window.location.hash.substring(1).split("/");
-  function validColor(value,fallback){
-    return /^#?(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(value || "")
-      ? "#" + value.replace("#","").toUpperCase()
-      : fallback;
-  }
-  return {
-    color1:validColor(parts[0],"#FFFFFF"),
-    color2:validColor(parts[1],"#FFFFFF"),
-    color3:validColor(parts[2],"#AAAAAA"),
-    color4:validColor(parts[3],"#666666")
-  };
-}
-const colors = getURLColors();
-document.documentElement.style.setProperty("--color1",colors.color1);
-document.documentElement.style.setProperty("--color2",colors.color2);
-document.documentElement.style.setProperty("--color3",colors.color3);
-document.documentElement.style.setProperty("--color4",colors.color4);
-document.documentElement.style.setProperty(
-  "--gradient1",
-  `linear-gradient(90deg,${colors.color1} 0%,${colors.color2} 100%)`
-);
-document.documentElement.style.setProperty(
-  "--gradient2",
-  `linear-gradient(90deg,${colors.color3} 0%,${colors.color4} 100%)`
-);
 const API = "https://script.google.com/macros/s/AKfycby5tKKny4hqGyG--JQxP4IVe2C8WWGO6sMij6p66MdSmLFVDUn6TbeBbM2L51TdWia_/exec";
 let games = [];
 let userChangedFilter = false;
@@ -357,16 +295,16 @@ function renderGames(){
       .sort((a,b) => b-a);
     let streak = 0;
     let expectedDate = new Date(todayStr);
-    const playedToday = sortedDates.some(
+    const hasPlayedToday = sortedDates.some(
       d => d.toDateString() === todayStr
     );
     let yesterday = new Date(todayStr);
     yesterday.setDate(yesterday.getDate()-1);
-    const playedYesterday = sortedDates.some(
+    const hasPlayedYesterday = sortedDates.some(
       d => d.toDateString() === yesterday.toDateString()
     );
-    if(playedToday || playedYesterday){
-      if(!playedToday && playedYesterday){
+    if(hasPlayedToday || hasPlayedYesterday){
+      if(!hasPlayedToday && hasPlayedYesterday){
         expectedDate = yesterday;
       }
       for(let i=0;i<sortedDates.length;i++){
@@ -427,16 +365,16 @@ function renderGames(){
           alt=""
         >
         <div class="gameName">
-          <span class="primary-gradient">${g.name}</span>
+          ${g.name}
         </div>
         <div class="hoursPlayed">
-          <span class="secondary-gradient">${hours}h ${mins}m</span>
+          ${hours}h ${mins}m
         </div>
       </div>
     `;
   });
   row.innerHTML = htmlString ||
-    '<div style="font-size:14px;padding:10px;"><span class="secondary-gradient">No history found.</span></div>';
+    '<div style="color:#666;font-size:14px;padding:10px;">No history found.</div>';
 }
 // INITIAL LOAD
 loadGames();
