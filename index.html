@@ -40,7 +40,7 @@ select{
   -webkit-appearance:none;
   -moz-appearance:none;
   background:transparent;
-  color:white;
+  color:var(--color1);
   border:none;
   border-radius:999px;
   height:32px;
@@ -57,6 +57,21 @@ select{
 select option{
   background:#222222;
   color:white;
+}
+/* GRADIENT TEXT */
+.primaryGradient{
+  display:inline-block;
+  background:var(--gradient1);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.secondaryGradient{
+  display:inline-block;
+  background:var(--gradient2);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
 /* GAME ROW */
 .gamesRow{
@@ -184,7 +199,7 @@ select option{
 <div class="page">
   <div class="topBar">
 <div class="title">
-  Top Games Played
+  <span class="primaryGradient">Top Games Played</span>
 </div>
 <select id="filter" onchange="changeFilter()">
   <option value="day">Day</option>
@@ -196,190 +211,243 @@ select option{
   <div class="gamesRow" id="gamesRow"></div>
 </div>
 <script>
-const API = "https://script.google.com/macros/s/AKfycby5tKKny4hqGyG--JQxP4IVe2C8WWGO6sMij6p66MdSmLFVDUn6TbeBbM2L51TdWia_/exec";
+/* URL COLORS */
+function getURLColors(){
+  const parts = window.location.hash.substring(1).split("/");
+
+function validColor(value,fallback){
+return /^#?(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(value || “”)
+? “#” + value.replace(”#”,””).toUpperCase()
+: fallback;
+}
+
+return {
+color1:validColor(parts[0],”#FFFFFF”),
+color2:validColor(parts[1],”#FFFFFF”),
+color3:validColor(parts[2],”#AAAAAA”),
+color4:validColor(parts[3],”#666666”)
+};
+}
+
+const colors = getURLColors();
+
+document.documentElement.style.setProperty(”–color1”,colors.color1);
+document.documentElement.style.setProperty(
+“–gradient1”,
+linear-gradient(90deg,${colors.color1} 0%,${colors.color2} 100%)
+);
+document.documentElement.style.setProperty(
+“–gradient2”,
+linear-gradient(90deg,${colors.color3} 0%,${colors.color4} 100%)
+);
+
+const API = “https://script.google.com/macros/s/AKfycby5tKKny4hqGyG–JQxP4IVe2C8WWGO6sMij6p66MdSmLFVDUn6TbeBbM2L51TdWia_/exec”;
 let games = [];
 let userChangedFilter = false;
+
 // CHECK WHETHER THERE ARE GAMES TODAY
 function hasPlayedToday(){
-  const now = new Date();
-  return games.some(g => {
-    const d = new Date(g.date);
-    return (
-      !isNaN(d.getTime()) &&
-      d.getDate() === now.getDate() &&
-      d.getMonth() === now.getMonth() &&
-      d.getFullYear() === now.getFullYear()
-    );
-  });
+const now = new Date();
+return games.some(g => {
+const d = new Date(g.date);
+return (
+!isNaN(d.getTime()) &&
+d.getDate() === now.getDate() &&
+d.getMonth() === now.getMonth() &&
+d.getFullYear() === now.getFullYear()
+);
+});
 }
+
 // AUTOMATIC DEFAULT VIEW
 function setDefaultFilter(){
-  if(userChangedFilter) return;
-  const filter = document.getElementById("filter");
-  if(hasPlayedToday()){
-    filter.value = "day";
-  }else{
-    filter.value = "week";
-  }
+if(userChangedFilter) return;
+const filter = document.getElementById(“filter”);
+if(hasPlayedToday()){
+filter.value = “day”;
+}else{
+filter.value = “week”;
 }
+}
+
 // LOAD CACHE
-const cachedData = localStorage.getItem("roblox_games_cache");
+const cachedData = localStorage.getItem(“roblox_games_cache”);
 if(cachedData){
-  try{
-    games = JSON.parse(cachedData);
-    setDefaultFilter();
-    renderGames();
-  }catch(e){}
+try{
+games = JSON.parse(cachedData);
+setDefaultFilter();
+renderGames();
+}catch(e){}
 }
+
 // LOAD FRESH DATA
 async function loadGames(){
-  try{
-    const res = await fetch(API);
-    games = await res.json();
-    localStorage.setItem(
-      "roblox_games_cache",
-      JSON.stringify(games)
-    );
-    setDefaultFilter();
-    renderGames();
-  }catch(err){
-    console.error("Failed to fetch game data:",err);
-  }
+try{
+const res = await fetch(API);
+games = await res.json();
+localStorage.setItem(
+“roblox_games_cache”,
+JSON.stringify(games)
+);
+setDefaultFilter();
+renderGames();
+}catch(err){
+console.error(“Failed to fetch game data:”,err);
 }
+}
+
 // CHANGE FILTER
 function changeFilter(){
-  userChangedFilter = true;
-  const row = document.getElementById("gamesRow");
-  row.scrollLeft = 0;
-  renderGames();
+userChangedFilter = true;
+const row = document.getElementById(“gamesRow”);
+row.scrollLeft = 0;
+renderGames();
 }
+
 // RENDER GAMES
 function renderGames(){
-  const row = document.getElementById("gamesRow");
-  const filter = document.getElementById("filter").value;
-  const now = new Date();
-  const todayStr = now.toDateString();
-  let filtered = games.filter(g => {
-    const d = new Date(g.date);
-    if(isNaN(d.getTime())) return false;
-    const diff = (now - d) / (1000 * 60 * 60 * 24);
-    if(filter === "day"){
-      return (
-        d.getDate() === now.getDate() &&
-        d.getMonth() === now.getMonth() &&
-        d.getFullYear() === now.getFullYear()
-      );
-    }
-    if(filter === "week"){
-      return diff >= 0 && diff <= 7;
-    }
-    if(filter === "month"){
-      return diff >= 0 && diff <= 30;
-    }
-    return true;
-  });
-  // STREAK CALCULATION
-  const streakMapping = {};
-  const gameDates = {};
-  games.forEach(g => {
-    if(!gameDates[g.id]){
-      gameDates[g.id] = new Set();
-    }
-    gameDates[g.id].add(
-      new Date(g.date).toDateString()
-    );
-  });
-  Object.keys(gameDates).forEach(id => {
-    const sortedDates = Array.from(gameDates[id])
-      .map(d => new Date(d))
-      .sort((a,b) => b-a);
-    let streak = 0;
-    let expectedDate = new Date(todayStr);
-    const hasPlayedToday = sortedDates.some(
-      d => d.toDateString() === todayStr
-    );
-    let yesterday = new Date(todayStr);
-    yesterday.setDate(yesterday.getDate()-1);
-    const hasPlayedYesterday = sortedDates.some(
-      d => d.toDateString() === yesterday.toDateString()
-    );
-    if(hasPlayedToday || hasPlayedYesterday){
-      if(!hasPlayedToday && hasPlayedYesterday){
-        expectedDate = yesterday;
-      }
-      for(let i=0;i<sortedDates.length;i++){
-        if(
-          sortedDates[i].toDateString() ===
-          expectedDate.toDateString()
-        ){
-          streak++;
-          expectedDate.setDate(
-            expectedDate.getDate()-1
-          );
-        }else if(sortedDates[i] < expectedDate){
-          break;
-        }
-      }
-    }
-    streakMapping[id] = streak;
-  });
-  // MERGE DUPLICATES
-  const merged = {};
-  filtered.forEach(g => {
-    if(!merged[g.id]){
-      merged[g.id] = {
-        ...g,
-        minutes:0
-      };
-    }
-    merged[g.id].minutes += Number(g.minutes) || 0;
-  });
-  filtered = Object.values(merged);
-  filtered.sort((a,b) => b.minutes-a.minutes);
-  // DISPLAY GAMES
-  let htmlString = "";
-  filtered.forEach(g => {
-    const hours = Math.floor(g.minutes/60);
-    const mins = g.minutes%60;
-    const consecutiveStreak = streakMapping[g.id] || 0;
-    let badgeHtml = "";
-    if(consecutiveStreak >= 2){
-      badgeHtml = `
-        <div class="streakBadge">
-          <span class="streakIcon">
-            <svg viewBox="0 0 24 24">
-              <path d="M17.66 11.57c-.77-.77-1.9-1.15-2.85-1.43-.87-.25-1.56-.45-1.95-.73-.55-.4-.76-.94-.76-1.57 0-.46.12-.89.37-1.3l.05-.07c.1-.15.14-.32.14-.49 0-.41-.25-.79-.65-.95-.38-.16-.83-.07-1.13.2l-.1.09C9.52 6.55 8.75 8.39 8.75 10c0 .33.02.66.07.98l.04.22c-.67-.47-1.21-1.12-1.55-1.87-.14-.3-.41-.5-.73-.52-.31-.02-.62.11-.8.37C5.3 10.02 5 11.19 5 12.5c0 3.87 3.13 7 7 7s7-3.13 7-7c0-1.28-.35-2.42-.96-3.41-.18-.3-.51-.47-.86-.44-.35.03-.66.24-.78.56-.37.98-.99 1.74-1.74 2.36z"/>
-            </svg>
-          </span>
-          <span>${consecutiveStreak}</span>
-        </div>
-      `;
-    }
-    htmlString += `
-      <div class="gameCard">
-        ${badgeHtml}
-        <img
-          class="thumb"
-          draggable="false"
-          src="${g.image || ''}"
-          alt=""
-        >
-        <div class="gameName">
-          ${g.name}
-        </div>
-        <div class="hoursPlayed">
-          ${hours}h ${mins}m
-        </div>
-      </div>
-    `;
-  });
-  row.innerHTML = htmlString ||
-    '<div style="color:#666;font-size:14px;padding:10px;">No history found.</div>';
+const row = document.getElementById(“gamesRow”);
+const filter = document.getElementById(“filter”).value;
+const now = new Date();
+const todayStr = now.toDateString();
+
+let filtered = games.filter(g => {
+const d = new Date(g.date);
+if(isNaN(d.getTime())) return false;
+const diff = (now - d) / (1000 * 60 * 60 * 24);
+
+if(filter === "day"){
+  return (
+    d.getDate() === now.getDate() &&
+    d.getMonth() === now.getMonth() &&
+    d.getFullYear() === now.getFullYear()
+  );
 }
+if(filter === "week"){
+  return diff >= 0 && diff <= 7;
+}
+if(filter === "month"){
+  return diff >= 0 && diff <= 30;
+}
+return true;
+
+});
+
+// STREAK CALCULATION
+const streakMapping = {};
+const gameDates = {};
+
+games.forEach(g => {
+if(!gameDates[g.id]){
+gameDates[g.id] = new Set();
+}
+gameDates[g.id].add(
+new Date(g.date).toDateString()
+);
+});
+
+Object.keys(gameDates).forEach(id => {
+const sortedDates = Array.from(gameDates[id])
+.map(d => new Date(d))
+.sort((a,b) => b-a);
+
+let streak = 0;
+let expectedDate = new Date(todayStr);
+const hasPlayedToday = sortedDates.some(
+  d => d.toDateString() === todayStr
+);
+let yesterday = new Date(todayStr);
+yesterday.setDate(yesterday.getDate()-1);
+const hasPlayedYesterday = sortedDates.some(
+  d => d.toDateString() === yesterday.toDateString()
+);
+if(hasPlayedToday || hasPlayedYesterday){
+  if(!hasPlayedToday && hasPlayedYesterday){
+    expectedDate = yesterday;
+  }
+  for(let i=0;i<sortedDates.length;i++){
+    if(
+      sortedDates[i].toDateString() ===
+      expectedDate.toDateString()
+    ){
+      streak++;
+      expectedDate.setDate(
+        expectedDate.getDate()-1
+      );
+    }else if(sortedDates[i] < expectedDate){
+      break;
+    }
+  }
+}
+streakMapping[id] = streak;
+
+});
+
+// MERGE DUPLICATES
+const merged = {};
+
+filtered.forEach(g => {
+if(!merged[g.id]){
+merged[g.id] = {
+…g,
+minutes:0
+};
+}
+merged[g.id].minutes += Number(g.minutes) || 0;
+});
+
+filtered = Object.values(merged);
+filtered.sort((a,b) => b.minutes-a.minutes);
+
+// DISPLAY GAMES
+let htmlString = “”;
+
+filtered.forEach(g => {
+const hours = Math.floor(g.minutes/60);
+const mins = g.minutes%60;
+const consecutiveStreak = streakMapping[g.id] || 0;
+
+let badgeHtml = "";
+if(consecutiveStreak >= 2){
+  badgeHtml = `
+    <div class="streakBadge">
+      <span class="streakIcon">
+        <svg viewBox="0 0 24 24">
+          <path d="M17.66 11.57c-.77-.77-1.9-1.15-2.85-1.43-.87-.25-1.56-.45-1.95-.73-.55-.4-.76-.94-.76-1.57 0-.46.12-.89.37-1.3l.05-.07c.1-.15.14-.32.14-.49 0-.41-.25-.79-.65-.95-.38-.16-.83-.07-1.13.2l-.1.09C9.52 6.55 8.75 8.39 8.75 10c0 .33.02.66.07.98l.04.22c-.67-.47-1.21-1.12-1.55-1.87-.14-.3-.41-.5-.73-.52-.31-.02-.62.11-.8.37C5.3 10.02 5 11.19 5 12.5c0 3.87 3.13 7 7 7s7-3.13 7-7c0-1.28-.35-2.42-.96-3.41-.18-.3-.51-.47-.86-.44-.35.03-.66.24-.78.56-.37.98-.99 1.74-1.74 2.36z"/>
+        </svg>
+      </span>
+      <span>${consecutiveStreak}</span>
+    </div>
+  `;
+}
+htmlString += `
+  <div class="gameCard">
+    ${badgeHtml}
+    <img
+      class="thumb"
+      draggable="false"
+      src="${g.image || ''}"
+      alt=""
+    >
+    <div class="gameName">
+      <span class="primaryGradient">${g.name}</span>
+    </div>
+    <div class="hoursPlayed">
+      <span class="secondaryGradient">${hours}h ${mins}m</span>
+    </div>
+  </div>
+`;
+
+});
+
+row.innerHTML = htmlString ||
+‘No history found.’;
+}
+
 // INITIAL LOAD
 loadGames();
+
 // REFRESH EVERY MINUTE
 setInterval(loadGames,60000);
-</script>
 </body>
 </html>
