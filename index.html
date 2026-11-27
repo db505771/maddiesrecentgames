@@ -32,7 +32,12 @@ body{
 .title{
   font-size:24px;
   font-weight:700;
-  color:white;
+  color:var(--color1);
+  display:inline-block;
+  background:linear-gradient(90deg,var(--color1) 0%,var(--color2) 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
 /* TOGGLE */
 select{
@@ -40,7 +45,7 @@ select{
   -webkit-appearance:none;
   -moz-appearance:none;
   background:transparent;
-  color:white;
+  color:var(--color3);
   border:none;
   border-radius:999px;
   height:32px;
@@ -56,7 +61,7 @@ select{
 /* DROPDOWN OPTIONS */
 select option{
   background:#222222;
-  color:white;
+  color:var(--color3);
 }
 /* GAME ROW */
 .gamesRow{
@@ -139,7 +144,12 @@ select option{
   font-size:14px;
   font-weight:600;
   line-height:1.2;
-  color:white;
+  color:var(--color1);
+  display:inline-block;
+  background:linear-gradient(90deg,var(--color1) 0%,var(--color2) 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
   display:-webkit-box;
   -webkit-line-clamp:2;
   -webkit-box-orient:vertical;
@@ -148,8 +158,24 @@ select option{
 }
 .hoursPlayed{
   margin-top:5px;
-  color:white;
+  color:var(--color3);
   font-size:12px;
+  display:inline-block;
+  background:linear-gradient(90deg,var(--color3) 0%,var(--color4) 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+/* EMPTY HISTORY */
+.emptyHistory{
+  color:var(--color3);
+  font-size:14px;
+  padding:10px;
+  display:inline-block;
+  background:linear-gradient(90deg,var(--color3) 0%,var(--color4) 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
 /* MOBILE */
 @media(max-width:600px){
@@ -196,6 +222,40 @@ select option{
   <div class="gamesRow" id="gamesRow"></div>
 </div>
 <script>
+/* FOUR-COLOR URL SYSTEM */
+function getHexColor(value, fallback){
+  if(!value) return fallback;
+  value = value.trim().replace(/^#/,"");
+  if(/^[0-9a-fA-F]{3}$/.test(value)){
+    value = value.split("").map(c => c+c).join("");
+  }
+  if(/^[0-9a-fA-F]{6}$/.test(value)){
+    return "#" + value.toUpperCase();
+  }
+  return fallback;
+}
+function applyURLColors(){
+  const defaults = [
+    "#FFFFFF",
+    "#FFFFFF",
+    "#AAAAAA",
+    "#666666"
+  ];
+  const hash = window.location.hash.replace(/^#/,"");
+  const values = hash.split("/");
+  const colors = [
+    getHexColor(values[0],defaults[0]),
+    getHexColor(values[1],defaults[1]),
+    getHexColor(values[2],defaults[2]),
+    getHexColor(values[3],defaults[3])
+  ];
+  document.documentElement.style.setProperty("--color1",colors[0]);
+  document.documentElement.style.setProperty("--color2",colors[1]);
+  document.documentElement.style.setProperty("--color3",colors[2]);
+  document.documentElement.style.setProperty("--color4",colors[3]);
+}
+applyURLColors();
+window.addEventListener("hashchange",applyURLColors);
 const API = "https://script.google.com/macros/s/AKfycby5tKKny4hqGyG--JQxP4IVe2C8WWGO6sMij6p66MdSmLFVDUn6TbeBbM2L51TdWia_/exec";
 let games = [];
 let userChangedFilter = false;
@@ -374,7 +434,7 @@ function renderGames(){
     `;
   });
   row.innerHTML = htmlString ||
-    '<div style="color:#666;font-size:14px;padding:10px;">No history found.</div>';
+    '<div class="emptyHistory">No history found.</div>';
 }
 // INITIAL LOAD
 loadGames();
