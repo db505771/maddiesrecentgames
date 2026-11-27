@@ -44,10 +44,7 @@ select{
   appearance:none;
   -webkit-appearance:none;
   -moz-appearance:none;
-  background:linear-gradient(90deg,var(--color1) 0%,var(--color2) 100%);
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
+  background:transparent;
   color:var(--color1);
   border:none;
   border-radius:999px;
@@ -60,11 +57,16 @@ select{
   outline:none;
   cursor:pointer;
   flex-shrink:0;
+  background-image:linear-gradient(90deg,var(--color1) 0%,var(--color2) 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
 /* DROPDOWN OPTIONS */
 select option{
   background:#222222;
   color:var(--color1);
+  -webkit-text-fill-color:var(--color1);
 }
 /* GAME ROW */
 .gamesRow{
